@@ -1,0 +1,23 @@
+---
+subtitle: "TMA4268 Statistical Learning V2022"
+title: "Compulsory exercise 1: Group 16"
+author: "Weicheng Hua, Emil Johannese Haugstvedt, Torbjørn Baadsvik"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  # html_document
+  pdf_document
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+knitr::opts_chunk$set(echo = TRUE,tidy=TRUE,message=FALSE,warning=FALSE,strip.white=TRUE,prompt=FALSE,
+                      cache=TRUE, size="scriptsize",fig.width=4, fig.height=3,fig.align = "center")
+
+```
+
+```{r,eval=TRUE,echo=FALSE}
+library("knitr")
+library("rmarkdown")
+```
+
+<!--  Etc (load all packages needed). -->
