@@ -20,7 +20,6 @@ library("knitr")
 library("rmarkdown")
 ```
 
-
 \section{Problem 1}
 
 \subsection{a)}
@@ -31,20 +30,17 @@ library("rmarkdown")
 
 \subsection{d)}
 
-
 \section{Problem 2}
 
 \subsection{a)}
 
 \subsection{b)}
 
-
 \section{Problem 3}
 
 \subsection{a)}
 
 \subsection{b)}
-
 
 \section{Problem 4}
 
@@ -56,13 +52,11 @@ library("rmarkdown")
 
 \subsection{d)}
 
-
 \section{Problem 5}
 
 \subsection{a)}
 
 \subsection{b)}
-
 
 \section{Problem 6}
 
@@ -73,4 +67,3 @@ library("rmarkdown")
 \subsection{c)}
 
 \subsection{d)}
-
