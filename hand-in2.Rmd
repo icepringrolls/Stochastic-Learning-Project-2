@@ -1,11 +1,11 @@
 ---
 subtitle: "TMA4268 Statistical Learning V2022"
 title: "Compulsory exercise 1: Group 16"
-author: "Weicheng Hua, Emil Johannese Haugstvedt, Torbjørn Baadsvik"
+author: "Weicheng Hua, Emil Johannesen Haugstvedt, Torbjørn Baadsvik"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
-  # html_document
-  pdf_document
+  pdf_document:
+    toc: true
 ---
 
 ```{r setup, include=FALSE}
@@ -20,4 +20,57 @@ library("knitr")
 library("rmarkdown")
 ```
 
-<!--  Etc (load all packages needed). -->
+
+\section{Problem 1}
+
+\subsection{a)}
+
+\subsection{b)}
+
+\subsection{c)}
+
+\subsection{d)}
+
+
+\section{Problem 2}
+
+\subsection{a)}
+
+\subsection{b)}
+
+
+\section{Problem 3}
+
+\subsection{a)}
+
+\subsection{b)}
+
+
+\section{Problem 4}
+
+\subsection{a)}
+
+\subsection{b)}
+
+\subsection{c)}
+
+\subsection{d)}
+
+
+\section{Problem 5}
+
+\subsection{a)}
+
+\subsection{b)}
+
+
+\section{Problem 6}
+
+\subsection{a)}
+
+\subsection{b)}
+
+\subsection{c)}
+
+\subsection{d)}
+
