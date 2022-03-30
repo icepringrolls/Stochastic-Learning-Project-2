@@ -1,2 +1,17 @@
 knitr
 rmarkdown
+e1071
+ggplot2
+lattice
+caret
+kernlab
+tidyverse
+tibble
+tidyr
+readr
+purrr
+dplyr
+stringr
+forcats
+palmerpenguins
+ggfortify
