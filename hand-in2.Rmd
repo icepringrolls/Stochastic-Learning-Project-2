@@ -265,9 +265,12 @@ pred <- predict(prune_tree.penguin, test, type = 'class')
 tab <- table(pred, test$species)
 tab
 ```
-The misclassification rate will then be:
+Above you can see a table showing how good, and bad, the tree performs on the test data.
+
+Now we will calculate the misclassification rate using this table.
 ```{r}
-(1 - sum(diag(tab))/sum(tab))
+missclassification_rate <- round((1 - sum(diag(tab))/sum(tab)), 2)
+print(paste('The missclassification rate is:', missclassification_rate))
 ```
 
 
@@ -276,26 +279,16 @@ The misclassification rate will then be:
 library(gbm)
 library(dismo)
 
-#train.df <- data.frame(train)
-#train.df['isAdelie'] <- train.df$species == 'Adelie'
-#train.df['isChinstrap'] <- train.df$species == 'Chinstrap'
-#train.df['isGentoo'] <- train.df$species == 'Gentoo'
-
-
-#
-#a <- gbm.step(data = train.df,
-#              gbm.x = names(train.df[2:7]),
-#              gbm.y = names(train.df[8:10]),
-#              family = 'gaussian',
-#              tolerance.method = 'auto')
-
+# Fit boosted forest with initial parameters
 boosted.penguin <- gbm(species~ .,
                        data = train,
-                       n.trees = 500,
+                       n.trees = 100,
                        distribution = 'multinomial')
 
 summary(boosted.penguin)
 ```
+
+From the above plot you can see that "billL" and "flipperL" are the most influantial ones when it comes to predicting the species of the penguins.
 
 Now we predict on the test data and calculate the misclassification rate:
 
@@ -307,10 +300,12 @@ pred.penguin <- colnames(pred)[apply(pred,1,which.max)]
 tab.boost <- table(pred.penguin, test$species)
 tab.boost
 ```
-The misclassification rate is
+Above you can see a table showing the right and wrong classifications of the boosted forest on the test data.
+
+Now we will calculate the misclassification rate using this table.
 ```{r}
 misclassification.rate.boost <- 1-sum(diag(tab.boost))/sum(tab.boost)
-misclassification.rate.boost
+print(paste('The misclassification rate is:', misclassification.rate.boost))
 ```
 
 
