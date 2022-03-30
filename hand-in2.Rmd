@@ -20,7 +20,6 @@ library("knitr")
 library("rmarkdown")
 ```
 
-
 \section{Problem 1}
 
 \subsection{a)}
@@ -31,30 +30,161 @@ library("rmarkdown")
 
 \subsection{d)}
 
-
 \section{Problem 2}
 
 \subsection{a)}
 
 \subsection{b)}
 
-
 \section{Problem 3}
 
-\subsection{a)}
+\subsection{a}
 
-\subsection{b)}
+(i) True. The proof for this is pretty long and complicated. You can see it in the link
 
+(ii) False. By increasing the number of cutpoints each step function will get more and more affected by the points within their range, and thus overfit.
+
+(iii) False. The penalty term is \$\\int g''(t)\^2 dt\$.
+
+(iv) True. With high \$k\$ the number more neighbors are needed in order to classify a point, thus the variance will be low and the bias will increase.
+
+\subsection{b}
+
+``` {r}
+# Fit model
+model <- gam(medv ~ rm + s(ptratio, k = 3) + poly(lstat, df = 2), data = boston.train)
+
+# Plot model with training data
+plot(model, boston.train)
+```
 
 \section{Problem 4}
 
 \subsection{a)}
 
+(i) False. The trees can handle interaction terms, but you can not specify them yourself. The tree will "find" them by its nature.
+
+(ii) True. 
+
+(iii) True.
+
+(iv) True. It decides the number of "iterations" in the boosting algorithm.
+
 \subsection{b)}
 
+
 \subsection{c)}
+First some given R code
+```{r}
+library(tidyverse)
+library(palmerpenguins) # Contains the data set "penguins".
+data(penguins)
+
+names(penguins) <- c("species","island","billL","billD","flipperL","mass","sex","year")
+
+Penguins_reduced <- penguins %>%  
+  dplyr::mutate(mass = as.numeric(mass),  
+         flipperL = as.numeric(flipperL),
+         year = as.numeric(year)) %>% 
+  drop_na()
+
+# We do not want "year" in the data (this will not help for future predictions)
+Penguins_reduced <- Penguins_reduced[,-c(8)]
+
+set.seed(4268)
+# 70% of the sample size for training set
+training_set_size <- floor(0.7 * nrow(Penguins_reduced))
+train_ind <- sample(seq_len(nrow(Penguins_reduced)), size = training_set_size)
+train <- Penguins_reduced[train_ind, ]
+test <- Penguins_reduced[-train_ind, ]
+```
+
+(i)
+```{r}
+library(tree)
+
+# Create the tree 
+tree.penguin <- tree(species ~ .,
+                     data = train,
+                     split = 'gini')
+
+# Plot the tree
+plot(tree.penguin, type = 'uniform');text(tree.penguin)
+```
+(ii)
+Now, apply 10-fold cross-validation 
+```{r}
+set.seed(123)
+
+# Do 10-fold cross-validation
+cv.penguin <- cv.tree(tree.penguin)
+
+# Plot result from the 10-fold cross-validation
+plot(cv.penguin)
+```
+(iii) 
+From the above plot the optimal tree looks to be of size 4. 
+```{r}
+
+# Prune the tree according to the obseravtion in the above plot
+prune_tree.penguin <- prune.misclass(tree.penguin, best = 4)
+
+plot(prune_tree.penguin, type = 'uniform'); text(prune_tree.penguin)
+```
+
+
+```{r}
+pred <- predict(prune_tree.penguin, test, type = 'class')
+tab <- table(pred, test$species)
+tab
+```
+The misclassification rate will then be:
+```{r}
+(1 - sum(diag(tab))/sum(tab))
+```
+
 
 \subsection{d)}
+```{r}
+library(gbm)
+library(dismo)
+
+#train.df <- data.frame(train)
+#train.df['isAdelie'] <- train.df$species == 'Adelie'
+#train.df['isChinstrap'] <- train.df$species == 'Chinstrap'
+#train.df['isGentoo'] <- train.df$species == 'Gentoo'
+
+
+#
+#a <- gbm.step(data = train.df,
+#              gbm.x = names(train.df[2:7]),
+#              gbm.y = names(train.df[8:10]),
+#              family = 'gaussian',
+#              tolerance.method = 'auto')
+
+boosted.penguin <- gbm(species~ .,
+                       data = train,
+                       n.trees = 500,
+                       distribution = 'multinomial')
+
+summary(boosted.penguin)
+```
+
+Now we predict on the test data and calculate the misclassification rate:
+
+```{r}
+pred <- predict.gbm(boosted.penguin, test, type = 'response')
+
+pred.penguin <- colnames(pred)[apply(pred,1,which.max)]
+
+tab.boost <- table(pred.penguin, test$species)
+tab.boost
+```
+The misclassification rate is
+```{r}
+misclassification.rate.boost <- 1-sum(diag(tab.boost))/sum(tab.boost)
+misclassification.rate.boost
+```
 
 
 \section{Problem 5}
@@ -62,7 +192,6 @@ library("rmarkdown")
 \subsection{a)}
 
 \subsection{b)}
-
 
 \section{Problem 6}
 
@@ -73,4 +202,3 @@ library("rmarkdown")
 \subsection{c)}
 
 \subsection{d)}
-
