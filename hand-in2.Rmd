@@ -69,14 +69,14 @@ set.seed(1)
 x_train <- model.matrix(medv~., boston.train)[,-1]
 y_train <- boston.train$medv
 
-model_lass <- cv.glmnet(x_train, y_train, alpha =1, nfolds =4)
+model_lass <- cv.glmnet(x_train, y_train, alpha =1, nfolds = 5)
 plot(model_lass)
 
 
 best_lambda <- model_lass$lambda.min
 best_lambda
 
-coef_lass <- coef(model_lass, s = model_lass$lambda.1se )
+coef_lass <- coef(model_lass, s = model_lass$lambda.min )
 coef_lass
 
 
@@ -117,7 +117,7 @@ legend("bottomright", legend =colnames(x_train), cex =0.3)
 
 (iii)False. Lasso is expected to perform better when there is a only relatively small number of important predictors and a significant proportion of unimportant coefficients that have very small or zero value. Ridge is expected to perform better when there is a high proportion of important predictors with predictors of all having roughly the same size.
 
-(iv) Ture. The formula for Elastic Net is given as 
+(iv) True. The formula for Elastic Net is given as 
 
 $\min _{\beta_{0}, \beta} \frac{1}{N} \sum_{i=1}^{N} w_{i} l\left(y_{i}, \beta_{0}+\beta^{T} x_{i}\right)+\lambda\left[(1-\alpha)\|\beta\|_{2}^{2} / 2+\alpha\|\beta\|_{1}\right]$
 
@@ -146,9 +146,13 @@ head(synthetic)
 ```{r,eval=TRUE,echo=TRUE}
 library(pls)
 
+
+
 pcr_model <- pcr(Y~., data =synthetic.train, scale =TRUE, validation ="CV")
 validationplot(pcr_model, val.type ="MSEP")
 title(sub ="PCR")
+
+summary(pcr_model)
 
 
 plsr_model<- plsr(Y~., data =synthetic.train, scale =TRUE, validation ="CV")
