@@ -51,7 +51,7 @@ library("rmarkdown")
 \subsection{b}
 
 ``` {r}
-# Fit model
+# Fit modelt
 model <- gam(medv ~ rm + s(ptratio, k = 3) + poly(lstat, df = 2), data = boston.train)
 
 # Plot model with training data
