@@ -1,6 +1,6 @@
 ---
 subtitle: "TMA4268 Statistical Learning V2022"
-title: "Compulsory exercise 1: Group 16"
+title: "Compulsory exercise 2: Group 16"
 author: "Weicheng Hua, Emil Johannesen Haugstvedt, Torbjørn Baadsvik"
 date: "`r format(Sys.time(), '%d %B, %Y')`"
 output: 
@@ -22,19 +22,146 @@ library("rmarkdown")
 
 \section{Problem 1}
 
+```{r,eval=TRUE,echo=FALSE}
+library(MASS)
+str(Boston)
+cehcl<-Boston
+set.seed(1)
+boston <- scale(Boston, center = T, scale = T)
+train.ind = sample(1:nrow(boston), 0.8*nrow(boston))
+boston.train = data.frame(boston[train.ind, ])
+boston.test = data.frame(boston[-train.ind, ])
+dim(boston.train)
+```
+
+
 \subsection{a)}
+```{r,eval=TRUE,echo=TRUE}
+library(leaps)
+fwd_regfit <- regsubsets(medv~., data = boston.train, nvmax = 14, method = "forward" )
+summary_fwd_regfit <- summary(fwd_regfit)
+bck_regfit <- regsubsets(medv~., data = boston.train, nvmax = 14, method = "backward" )
+summary_bck_regfit <- summary(bck_regfit)
+par(mfrow=c(1,2))
+plot(summary_fwd_regfit$rsq, xlab = "Number of Variables", ylab = "RSq fwd" ,type = "l")
+plot(summary_bck_regfit$rsq, xlab = "Number of Variables", ylab = "RSq bck" ,type = "l")
+
+
+```
+
 
 \subsection{b)}
+
+```{r,eval=TRUE,echo=TRUE}
+number_predictors_selected <- 4
+variables_fwd <- names(coef(fwd_regfit, id = number_predictors_selected))
+variables_fwd
+```
+The four "predictors" from the forward stepwise selection are "rm" ,"dis", "ptratio" and "lstat".
+
 
 \subsection{c)}
 
+```{r,eval=TRUE,echo=TRUE}
+
+library(glmnet)
+set.seed(1)
+x_train <- model.matrix(medv~., boston.train)[,-1]
+y_train <- boston.train$medv
+
+model_lass <- cv.glmnet(x_train, y_train, alpha =1, nfolds =4)
+plot(model_lass)
+
+
+best_lambda <- model_lass$lambda.min
+best_lambda
+
+coef_lass <- coef(model_lass, s = model_lass$lambda.1se )
+coef_lass
+
+
+```
+
+(ii)
+```{r,eval=TRUE,echo=TRUE}
+
+best_lambda <- model_lass$lambda.min
+best_lambda
+
+```
+Th best lambda value is given as:0.00315
+
+
+(iii)
+The fitted coefficients at the best $\lambda$ value is given by the function below. A plot for the coefficients value at different lambda is given as well. Indus is not a relevant coefficient at the lambda value with lowest MSE and the coefficient for age is very small small meaning that it is most likely significantly less important than the rest. This is possible to do for sclaed data. 
+
+```{r,eval=TRUE,echo=TRUE}
+
+coef_lass <- coef(model_lass, s = model_lass$lambda.min )
+coef_lass
+
+lambdas_to_try <- 10^seq(-7,1, length.out = 100)
+res<- glmnet(x_train, y_train, alpha=1, lambda =lambdas_to_try ,standardize= FALSE)
+plot(res, xvar= "lambda")
+legend("bottomright", legend =colnames(x_train), cex =0.3)
+
+```
+
+
+
+
 \subsection{d)}
+(i)True. Lasso is generally faster than step-wise especially when n(number of datapoints) and p(number of predictors) are very large and the number of relatively important predictors are small. This is because lasso can eliminate multiple predictors at once by increasing the value of lambda while stepwise can only eliminate it one by one. https://www.stat.cmu.edu/~ryantibs/papers/bestsubset.pdf
+
+(ii) False.It is impossible for ridge regression to result in coefficients equal to zero. The coefficients approaches zero as lambda's value get extremely large. The coefficients can however become zero in Lasso regression.
+
+(iii)False. Lasso is expected to perform better when there is a only relatively small number of important predictors and a significant proportion of unimportant coefficients that have very small or zero value. Ridge is expected to perform better when there is a high proportion of important predictors with predictors of all having roughly the same size.
+
+(iv) Ture. The formula for Elastic Net is given as 
+
+$\min _{\beta_{0}, \beta} \frac{1}{N} \sum_{i=1}^{N} w_{i} l\left(y_{i}, \beta_{0}+\beta^{T} x_{i}\right)+\lambda\left[(1-\alpha)\|\beta\|_{2}^{2} / 2+\alpha\|\beta\|_{1}\right]$
+
+Where the $\alpha$ value can be varied between 0 and 1 to change the weighting between Ridge and Lasso.
+
+
 
 \section{Problem 2}
 
+```{r}
+library(MASS)
+set.seed(1)
+# load a synthetic dataset
+id <- "1CWZYfrLOrFdrIZ6Hv73e3xxt0SFgU4Ph" # google file ID
+synthetic <- read.csv(sprintf("https://docs.google.com/uc?id=%s&export=download", id))
+# split into training and test sets
+train.ind = sample(1:nrow(synthetic), 0.8 * nrow(synthetic)) 
+synthetic.train = data.frame(synthetic[train.ind, ])
+synthetic.test = data.frame(synthetic[-train.ind, ])
+# show head(..)
+# Y: response variable; X: predictor variable
+head(synthetic)
+```
+
 \subsection{a)}
+```{r,eval=TRUE,echo=TRUE}
+library(pls)
+
+pcr_model <- pcr(Y~., data =synthetic.train, scale =TRUE, validation ="CV")
+validationplot(pcr_model, val.type ="MSEP")
+title(sub ="PCR")
+
+
+plsr_model<- plsr(Y~., data =synthetic.train, scale =TRUE, validation ="CV")
+validationplot(plsr_model, val.type = "MSEP")
+title(sub = "PLSR")
+
+```
+
+
 
 \subsection{b)}
+The PCR method show an almost uniform reduction in MSEP with increasing number of principal components. On the other hand, PLSR showed a sharp drop in MSEP when moving from 0 to 1 component and from 3 to 4 components, with the MSEP approaching zero from 4 components and onwards. The main difference between the PCR and the PLSR method is that in PCR, the principal components are created without considering their significance to Y, while in PLSR the principal components are created such that each additional principal components is weighted to have less significance to the reponse variable.  
+
 
 \section{Problem 3}
 
