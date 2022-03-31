@@ -173,12 +173,12 @@ autoplot(pca_mat, data = happiness.X, colour='Black',
          label=T, label.size=4.5)
 ```
 \subsubsection{i)}
-We observe that the loading associated with the variable "Generosity" 
-is approximately -0.2 for PC2, and 0.02 for PC1. The large difference in the 
-absolute value of the two loadings imply that the "Generosity" variable has a 
-greater impact on PC2 than PC1. Meanwhile, we observe that the loading 
-associated with "Freedom.to.make.life.choices" is approximately -0.1 for 
-both PC1 and PC2. Thus, this variable has nearly equal impact on PC1 and PC2.
+We observe that the variables "Logged.GDP.per.capita", "Healthy.life.expenctancy"
+and "Social.support" are highly correlated as they have nearly equal loadings on
+PC1 and PC2.
+The loading vectors for the variables "Freedom.to.make.like.choices" and 
+"Perceptions.of.corruption" are nearly antiparallel, indicating that these
+variables have a strong negative correlation.
 
 \subsubsection{ii)}
 Afghanistan appears to be clearly separated from the other countries in this
