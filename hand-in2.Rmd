@@ -15,9 +15,26 @@ knitr::opts_chunk$set(echo = TRUE,tidy=TRUE,message=FALSE,warning=FALSE,strip.wh
 
 ```
 
-```{r,eval=TRUE,echo=FALSE}
+```{r,eval=TRUE,echo=FALSE, warning=FALSE}
 library("knitr")
 library("rmarkdown")
+
+# General additive models
+library(mgcv)
+
+# Classification
+library(e1071)
+library(caret)
+library(kernlab)
+
+# Partial least squares regression
+library(plsRglm)
+library(plsdof)
+
+# K-means clustering
+#install.packages(c("factoextra", "cluster"))
+library(factoextra)
+library(cluster)
 ```
 
 \section{Problem 1}
@@ -222,6 +239,7 @@ Penguins_reduced <- penguins %>%
 # We do not want "year" in the data (this will not help for future predictions)
 Penguins_reduced <- Penguins_reduced[,-c(8)]
 
+
 set.seed(4268)
 # 70% of the sample size for training set
 training_set_size <- floor(0.7 * nrow(Penguins_reduced))
@@ -312,19 +330,186 @@ misclassification.rate.boost <- 1-sum(diag(tab.boost))/sum(tab.boost)
 print(paste('The misclassification rate is:', misclassification.rate.boost))
 ```
 
-
 \section{Problem 5}
 
 \subsection{a)}
+\begin{tabular}{c c c c}
+i) & ii) & iii) & iv)\\
+FALSE & TRUE & FALSE & TRUE\\
+\end{tabular}
 
 \subsection{b)}
+
+```{r}
+
+svc.cvtune <- function(kernel, paramgrid, k){
+ ctrl <- tune.control(sampling="cross", cross=k, nrepeat = 1)
+ cvtune.result <- tune(method=svm, species~., kernel=eval(kernel), 
+      data=train, ranges=paramgrid, tunecontrol=ctrl)
+ cvtune.result
+}
+
+k <- 5
+svc.fit_and_eval <- function(kernel, paramgrid, k){
+  res <- svc.cvtune(kernel, paramgrid, k)
+  print(strrep("_", 60))
+  print(paste(eval(kernel), "support vector classifier"))
+  print(strrep("-", 60))
+  print("Parameters:")
+  print(c(res$best.parameters))
+  
+  model <- res$best.model
+  pred <- as.factor(predict(model, test[-c(1)]))
+  cm <- confusionMatrix(data=pred, reference=test$species)
+  print(cm)
+}
+
+svc.fit_and_eval("linear", data.frame(cost=.1*1:20), k)
+svc.fit_and_eval("radial", data.frame(cost=.1*1:20, gamma=.1*1:20), k)
+```
+Using a linear rather than radial kernel in the support vector classifier
+yields slightly superior results on the test set. Thus, the linear kernel is
+preferred.
+
 
 \section{Problem 6}
 
 \subsection{a)}
+```{r}
+id <- "1NJ1SuUBebl5P8rMSIwm_n3S8a7K43yP4" # google file ID
+happiness <- read.csv(sprintf("https://docs.google.com/uc?id=%s&export=download", id),fileEncoding="UTF-8-BOM")
+colnames(happiness)
+```
+
+```{r}
+
+cols = c('Country.name', 
+         'Ladder.score',  # happiness score
+         'Logged.GDP.per.capita',  
+         'Social.support', 
+         'Healthy.life.expectancy', 
+         'Freedom.to.make.life.choices',
+         'Generosity',  # how generous people are
+         'Perceptions.of.corruption')
+# We continue with a subset of 8 columns:
+happiness = subset(happiness, select = cols)
+rownames(happiness) <- happiness[, c(1)]
+# And we create an X and a Y matrix
+happiness.X = happiness[, -c(1, 2)]
+happiness.Y = happiness[, c(1, 2)]
+happiness.XY = happiness[, -c(1)]
+# scale
+happiness.X = data.frame(scale(happiness.X))
+str(happiness)
+```
+
+
+```{r, fig.height=9, fig.width=10,out.width='18cm'}
+library(ggfortify)
+pca_mat = prcomp(happiness.X, center=T, scale=T)
+# Score and loadings plot:
+autoplot(pca_mat, data = happiness.X, colour='Black',
+         loadings = TRUE, loadings.colour = 'red',
+         loadings.label = TRUE, loadings.label.size = 5, 
+         label=T, label.size=4.5)
+```
+\subsubsection{i)}
+We observe that the variables "Logged.GDP.per.capita", "Healthy.life.expenctancy"
+and "Social.support" are highly correlated as they have nearly equal loadings on
+PC1 and PC2.
+The loading vectors for the variables "Freedom.to.make.like.choices" and 
+"Perceptions.of.corruption" are nearly antiparallel, indicating that these
+variables have a strong negative correlation.
+
+\subsubsection{ii)}
+Afghanistan appears to be clearly separated from the other countries in this
+plot, and may be considered to be an outlier.
+
 
 \subsection{b)}
+
+\subsubsection{i)}
+```{r}
+rot <- pca_mat$rotation
+loading.PC1 <- data.frame(variable=rownames(rot), loading=abs(rot[,1]))
+ggplot(data=loading.PC1, aes(x=variable, y=loading)) +
+  geom_col(color="white", fill="red") +
+  coord_flip()
+```
+
+\subsubsection{ii)}
+```{r}
+summary(happiness.XY)
+plsr_model.1 <- plsR(formula=Ladder.score~., data=happiness.XY, 
+                   scaleX=T, scaleY=T, nt=1)
+plsr_model.1
+
+```
+
+\subsubsection{iii)}
+```{r}
+rot.PC1 <- plsr_model.1$ww
+rot.PC1
+rownames(rot.PC1)
+loading.PC1 <- data.frame(variable=rownames(rot.PC1), loading=abs(rot.PC1[,1]))
+loading.PC1
+ggplot(data=loading.PC1, aes(x=variable, y=loading)) +
+  geom_col(color="white", fill="red") +
+  coord_flip()
+```
+
+\subsubsection{iv)}
+Based on the PLSR we see that the variables "Logged.GDP.per.capita", 
+"Healthy.life.expectancy", and "Social.support" are the most important 
+predictors.
+
 
 \subsection{c)}
 
 \subsection{d)}
+\begin{tabular}{c c c c}
+i) & ii) & iii) & iv)\\
+FALSE & FALSE & TRUE & TRUE\\
+\end{tabular}
+
+\subsection{d)}
+\subsubsection{i)}
+```{r}
+K = 3
+km.out <- kmeans(happiness.X, K, iter.max = 10)
+invalidclustering <- function(km.out){
+  clust <- km.out$cluster
+  scand <- clust[c("Norway", "Denmark", "Sweden", "Finland")]
+  !((sd(scand) == 0) & (clust["United States"] != scand["Norway"]))
+}
+
+i <- 1
+print(paste("iteration", i))
+while(invalidclustering(km.out)){
+  i <- i + 1
+  print(paste("iteration", i))
+  km.out <- kmeans(happiness.X, K, iter.max = 10)
+}
+
+autoplot(pca_mat, data = happiness.X, colour=km.out$cluster,
+         label=F, label.size=5,
+         loadings = F, loadings.colour = 'blue',
+         loadings.label = F, loadings.label.size = 3)
+```
+K = 3 was the minimum parameter required to obtain the desired clustering conditions.
+
+\subsubsection{ii)}
+```{r}
+clust <- km.out$cluster
+clust[c("Norway", "Denmark", "Sweden", "Finland")]
+clust["United States"]
+mean_ladder <- sapply(1:3, function(i) mean(happiness.Y[names(clust[clust == i]),2]))
+mean_ladder
+```
+We observe that the clustering algorithm places the scandinavian countries in 
+cluster 1, and the United States in cluster 2.
+When computing the average value of the "Ladder.score" variable within each cluster,
+we find that "Ladder.score" decreases with increasing cluster index.
+Thus, we conclude that the scandinavian countries belong the "happiest"
+cluster, and that the United States belong to the "medium happiness" cluster.
+
