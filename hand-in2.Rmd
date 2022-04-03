@@ -89,14 +89,6 @@ y_train <- boston.train$medv
 model_lass <- cv.glmnet(x_train, y_train, alpha =1, nfolds = 5)
 plot(model_lass)
 
-
-best_lambda <- model_lass$lambda.min
-best_lambda
-
-coef_lass <- coef(model_lass, s = model_lass$lambda.min )
-coef_lass
-
-
 ```
 
 (ii)
@@ -186,7 +178,7 @@ ggpairs(data = synthetic.train)
 
 ```
 
-The PCR method show an almost uniform reduction in MSEP with increasing number of principal components. On the other hand, PLSR showed a sharp drop in MSEP when moving from 0 to 1 component and from 3 to 4 components, with the MSEP approaching zero from 4 components and onwards. The main difference between the PCR and the PLSR method is that in PCR, the principal components are created without considering their significance to Y, while in PLSR the principal components are created such that each additional principal components is weighted to have less significance to the response variable. In that sense, PLSR is expected to perform better than PCR if there is only a few predictors that have good correlations with the response. This is the case for the synthetic data set as shown in the ggpair plot where there is only high correlation between Y and X1. On the other x2 and x3, which don't have significant correlatio with y, have high correlation with each and is most likely captured in the first prinicipal component in PCR. 
+The PCR method show an almost uniform reduction in MSEP with increasing number of principal components. On the other hand, PLSR showed a sharp drop in MSEP when moving from 0 to 1 component and from 3 to 4 components, with the MSEP approaching zero from 4 components and onwards. The main difference between the PCR and the PLSR method is that in PCR, the principal components are created without considering their significance to Y, while in PLSR the principal components are created such that each additional principal components is weighted to have less significance to Y. In that sense, PLSR is expected to perform better than PCR if there is only a few predictors that have good correlations with the response. This is the case for the synthetic data set as shown in the ggpairs plot where there is only high correlation between Y and X1 and none of the other Xs. On the other hand, X2 and X3, which don't have significant correlation with y, have high correlation with each other and is most likely captured in the first prinicipal component in PCR. This explains the poor performance of PCR.
 
 
 \section{Problem 3}
