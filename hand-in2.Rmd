@@ -65,7 +65,7 @@ plot(summary_bck_regfit$rsq, xlab = "Number of Variables", ylab = "RSq bck" ,typ
 
 
 ```
-
+The subscript "fwd" and "bck" indicate a forward- and backward stepwise selection respectively. 
 
 \subsection{b)}
 
@@ -74,7 +74,7 @@ number_predictors_selected <- 4
 variables_fwd <- names(coef(fwd_regfit, id = number_predictors_selected))
 variables_fwd
 ```
-The four "predictors" from the forward stepwise selection are "rm" ,"dis", "ptratio" and "lstat".
+The four "best" predictors from the forward stepwise selection in part (a) are "rm" ,"dis", "ptratio" and "lstat".
 
 
 \subsection{c)}
@@ -89,14 +89,6 @@ y_train <- boston.train$medv
 model_lass <- cv.glmnet(x_train, y_train, alpha =1, nfolds = 5)
 plot(model_lass)
 
-
-best_lambda <- model_lass$lambda.min
-best_lambda
-
-coef_lass <- coef(model_lass, s = model_lass$lambda.min )
-coef_lass
-
-
 ```
 
 (ii)
@@ -106,11 +98,11 @@ best_lambda <- model_lass$lambda.min
 best_lambda
 
 ```
-Th best lambda value is given as:0.00315
+Th best lambda value is given as:0.002172032
 
 
 (iii)
-The fitted coefficients at the best $\lambda$ value is given by the function below. A plot for the coefficients value at different lambda is given as well. Indus is not a relevant coefficient at the lambda value with lowest MSE and the coefficient for age is very small small meaning that it is most likely significantly less important than the rest. This is possible to do for sclaed data. 
+The fitted coefficients at the best $\lambda$ value is given by the function below. A plot for the coefficients value at different lambda is given as well. 
 
 ```{r,eval=TRUE,echo=TRUE}
 
@@ -169,8 +161,6 @@ pcr_model <- pcr(Y~., data =synthetic.train, scale =TRUE, validation ="CV")
 validationplot(pcr_model, val.type ="MSEP")
 title(sub ="PCR")
 
-summary(pcr_model)
-
 
 plsr_model<- plsr(Y~., data =synthetic.train, scale =TRUE, validation ="CV")
 validationplot(plsr_model, val.type = "MSEP")
@@ -181,7 +171,14 @@ title(sub = "PLSR")
 
 
 \subsection{b)}
-The PCR method show an almost uniform reduction in MSEP with increasing number of principal components. On the other hand, PLSR showed a sharp drop in MSEP when moving from 0 to 1 component and from 3 to 4 components, with the MSEP approaching zero from 4 components and onwards. The main difference between the PCR and the PLSR method is that in PCR, the principal components are created without considering their significance to Y, while in PLSR the principal components are created such that each additional principal components is weighted to have less significance to the reponse variable.  
+
+```{r,eval=TRUE,echo=TRUE}
+library(GGally)
+ggpairs(data = synthetic.train)
+
+```
+
+The PCR method show an almost uniform reduction in MSEP with increasing number of principal components. On the other hand, PLSR showed a sharp drop in MSEP when moving from 0 to 1 component and from 3 to 4 components, with the MSEP approaching zero from 4 components and onwards. The main difference between the PCR and the PLSR method is that in PCR, the principal components are created without considering their significance to Y, while in PLSR the principal components are created such that each additional principal components is weighted to have less significance to Y. In that sense, PLSR is expected to perform better than PCR if there is only a few predictors that have good correlations with the response. This is the case for the synthetic data set as shown in the ggpairs plot where there is only high correlation between Y and X1 and none of the other Xs. On the other hand, X2 and X3, which don't have significant correlation with y, have high correlation with each other and is most likely captured in the first prinicipal component in PCR. This explains the poor performance of PCR.
 
 
 \section{Problem 3}
