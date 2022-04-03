@@ -19,15 +19,15 @@
 \contentsline {subsection}{b)}{13}{section*.20}%
 \contentsline {section}{Problem 6}{16}{section*.21}%
 \contentsline {subsection}{a)}{16}{section*.22}%
-\contentsline {subsubsection}{i)}{18}{section*.23}%
-\contentsline {subsubsection}{ii)}{18}{section*.24}%
+\contentsline {subsubsection}{i)}{17}{section*.23}%
+\contentsline {subsubsection}{ii)}{17}{section*.24}%
 \contentsline {subsection}{b)}{18}{section*.25}%
 \contentsline {subsubsection}{i)}{18}{section*.26}%
 \contentsline {subsubsection}{ii)}{18}{section*.27}%
-\contentsline {subsubsection}{iii)}{19}{section*.28}%
-\contentsline {subsubsection}{iv)}{20}{section*.29}%
-\contentsline {subsection}{c)}{21}{section*.30}%
-\contentsline {subsection}{d)}{21}{section*.31}%
-\contentsline {subsection}{d)}{21}{section*.32}%
-\contentsline {subsubsection}{i)}{21}{section*.33}%
-\contentsline {subsubsection}{ii)}{22}{section*.34}%
+\contentsline {subsubsection}{iii)}{18}{section*.28}%
+\contentsline {subsubsection}{iv)}{19}{section*.29}%
+\contentsline {subsection}{c)}{19}{section*.30}%
+\contentsline {subsection}{d)}{19}{section*.31}%
+\contentsline {subsection}{d)}{19}{section*.32}%
+\contentsline {subsubsection}{i)}{19}{section*.33}%
+\contentsline {subsubsection}{ii)}{20}{section*.34}%
