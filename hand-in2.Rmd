@@ -51,8 +51,8 @@ boston.test = data.frame(boston[-train.ind, ])
 dim(boston.train)
 ```
 
-
 \subsection{a)}
+
 ```{r,eval=TRUE,echo=TRUE}
 library(leaps)
 fwd_regfit <- regsubsets(medv~., data = boston.train, nvmax = 14, method = "forward" )
@@ -65,7 +65,8 @@ plot(summary_bck_regfit$rsq, xlab = "Number of Variables", ylab = "RSq bck" ,typ
 
 
 ```
-The subscript "fwd" and "bck" indicate a forward- and backward stepwise selection respectively. 
+
+The subscript "fwd" and "bck" indicate a forward- and backward stepwise selection respectively.
 
 \subsection{b)}
 
@@ -74,8 +75,8 @@ number_predictors_selected <- 4
 variables_fwd <- names(coef(fwd_regfit, id = number_predictors_selected))
 variables_fwd
 ```
-The four "best" predictors from the forward stepwise selection in part (a) are "rm" ,"dis", "ptratio" and "lstat".
 
+The four "best" predictors from the forward stepwise selection in part (a) are "rm" ,"dis", "ptratio" and "lstat".
 
 \subsection{c)}
 
@@ -91,18 +92,18 @@ plot(model_lass)
 
 ```
 
-(ii)
+(ii) 
+
 ```{r,eval=TRUE,echo=TRUE}
 
 best_lambda <- model_lass$lambda.min
 best_lambda
 
 ```
+
 Th best lambda value is given as:0.002172032
 
-
-(iii)
-The fitted coefficients at the best $\lambda$ value is given by the function below. A plot for the coefficients value at different lambda is given as well. 
+(iii) The fitted coefficients at the best $\lambda$ value is given by the function below. A plot for the coefficients value at different lambda is given as well.
 
 ```{r,eval=TRUE,echo=TRUE}
 
@@ -116,23 +117,19 @@ legend("bottomright", legend =colnames(x_train), cex =0.3)
 
 ```
 
-
-
-
 \subsection{d)}
-(i)True. Lasso is generally faster than step-wise especially when n(number of datapoints) and p(number of predictors) are very large and the number of relatively important predictors are small. This is because lasso can eliminate multiple predictors at once by increasing the value of lambda while stepwise can only eliminate it one by one. https://www.stat.cmu.edu/~ryantibs/papers/bestsubset.pdf
+
+(i)True. Lasso is generally faster than step-wise especially when n(number of datapoints) and p(number of predictors) are very large and the number of relatively important predictors are small. This is because lasso can eliminate multiple predictors at once by increasing the value of lambda while stepwise can only eliminate it one by one. <https://www.stat.cmu.edu/~ryantibs/papers/bestsubset.pdf>
 
 (ii) False.It is impossible for ridge regression to result in coefficients equal to zero. The coefficients approaches zero as lambda's value get extremely large. The coefficients can however become zero in Lasso regression.
 
 (iii)False. Lasso is expected to perform better when there is a only relatively small number of important predictors and a significant proportion of unimportant coefficients that have very small or zero value. Ridge is expected to perform better when there is a high proportion of important predictors with predictors of all having roughly the same size.
 
-(iv) True. The formula for Elastic Net is given as 
+(iv) True. The formula for Elastic Net is given as
 
 $\min _{\beta_{0}, \beta} \frac{1}{N} \sum_{i=1}^{N} w_{i} l\left(y_{i}, \beta_{0}+\beta^{T} x_{i}\right)+\lambda\left[(1-\alpha)\|\beta\|_{2}^{2} / 2+\alpha\|\beta\|_{1}\right]$
 
 Where the $\alpha$ value can be varied between 0 and 1 to change the weighting between Ridge and Lasso.
-
-
 
 \section{Problem 2}
 
@@ -152,6 +149,7 @@ head(synthetic)
 ```
 
 \subsection{a)}
+
 ```{r,eval=TRUE,echo=TRUE}
 library(pls)
 
@@ -168,8 +166,6 @@ title(sub = "PLSR")
 
 ```
 
-
-
 \subsection{b)}
 
 ```{r,eval=TRUE,echo=TRUE}
@@ -179,7 +175,6 @@ ggpairs(data = synthetic.train)
 ```
 
 The PCR method show an almost uniform reduction in MSEP with increasing number of principal components. On the other hand, PLSR showed a sharp drop in MSEP when moving from 0 to 1 component and from 3 to 4 components, with the MSEP approaching zero from 4 components and onwards. The main difference between the PCR and the PLSR method is that in PCR, the principal components are created without considering their significance to Y, while in PLSR the principal components are created such that each additional principal components is weighted to have less significance to Y. In that sense, PLSR is expected to perform better than PCR if there is only a few predictors that have good correlations with the response. This is the case for the synthetic data set as shown in the ggpairs plot where there is only high correlation between Y and X1 and none of the other Xs. On the other hand, X2 and X3, which don't have significant correlation with y, have high correlation with each other and is most likely captured in the first prinicipal component in PCR. This explains the poor performance of PCR.
-
 
 \section{Problem 3}
 
@@ -195,7 +190,7 @@ The PCR method show an almost uniform reduction in MSEP with increasing number o
 
 \subsection{b}
 
-``` {r}
+```{r}
 # Fit modelt
 model <- gam(medv ~ rm + s(ptratio, k = 3) + poly(lstat, df = 2), data = boston.train)
 
@@ -209,7 +204,7 @@ plot(model, boston.train)
 
 (i) False. The trees can handle interaction terms, but you can not specify them yourself. The tree will "find" them by its nature.
 
-(ii) True. 
+(ii) True.
 
 (iii) True.
 
@@ -217,9 +212,12 @@ plot(model, boston.train)
 
 \subsection{b)}
 
+![](./problem4b.jpeg)
 
 \subsection{c)}
+
 First some given R code
+
 ```{r}
 library(tidyverse)
 library(palmerpenguins) # Contains the data set "penguins".
@@ -245,7 +243,8 @@ train <- Penguins_reduced[train_ind, ]
 test <- Penguins_reduced[-train_ind, ]
 ```
 
-(i)
+(i) 
+
 ```{r}
 library(tree)
 
@@ -257,8 +256,9 @@ tree.penguin <- tree(species ~ .,
 # Plot the tree
 plot(tree.penguin, type = 'uniform');text(tree.penguin)
 ```
-(ii)
-Now, apply 10-fold cross-validation 
+
+(ii) Now, apply 10-fold cross-validation
+
 ```{r}
 set.seed(123)
 
@@ -268,8 +268,9 @@ cv.penguin <- cv.tree(tree.penguin)
 # Plot result from the 10-fold cross-validation
 plot(cv.penguin)
 ```
-(iii) 
-From the above plot the optimal tree looks to be of size 4. 
+
+(iii) From the above plot the optimal tree looks to be of size 4.
+
 ```{r}
 
 # Prune the tree according to the obseravtion in the above plot
@@ -278,22 +279,23 @@ prune_tree.penguin <- prune.misclass(tree.penguin, best = 4)
 plot(prune_tree.penguin, type = 'uniform'); text(prune_tree.penguin)
 ```
 
-
 ```{r}
 pred <- predict(prune_tree.penguin, test, type = 'class')
 tab <- table(pred, test$species)
 tab
 ```
+
 Above you can see a table showing how good, and bad, the tree performs on the test data.
 
 Now we will calculate the misclassification rate using this table.
+
 ```{r}
 missclassification_rate <- round((1 - sum(diag(tab))/sum(tab)), 2)
 print(paste('The missclassification rate is:', missclassification_rate))
 ```
 
-
 \subsection{d)}
+
 ```{r}
 library(gbm)
 library(dismo)
@@ -319,9 +321,11 @@ pred.penguin <- colnames(pred)[apply(pred,1,which.max)]
 tab.boost <- table(pred.penguin, test$species)
 tab.boost
 ```
+
 Above you can see a table showing the right and wrong classifications of the boosted forest on the test data.
 
 Now we will calculate the misclassification rate using this table.
+
 ```{r}
 misclassification.rate.boost <- 1-sum(diag(tab.boost))/sum(tab.boost)
 print(paste('The misclassification rate is:', misclassification.rate.boost))
@@ -329,12 +333,13 @@ print(paste('The misclassification rate is:', misclassification.rate.boost))
 
 \section{Problem 5}
 
+```{=tex}
 \subsection{a)}
 \begin{tabular}{c c c c}
 i) & ii) & iii) & iv)\\
 FALSE & TRUE & FALSE & TRUE\\
 \end{tabular}
-
+```
 \subsection{b)}
 
 ```{r}
@@ -364,14 +369,13 @@ svc.fit_and_eval <- function(kernel, paramgrid, k){
 svc.fit_and_eval("linear", data.frame(cost=.1*1:20), k)
 svc.fit_and_eval("radial", data.frame(cost=.1*1:20, gamma=.1*1:20), k)
 ```
-Using a linear rather than radial kernel in the support vector classifier
-yields slightly superior results on the test set. Thus, the linear kernel is
-preferred.
 
+Using a linear rather than radial kernel in the support vector classifier yields slightly superior results on the test set. Thus, the linear kernel is preferred.
 
 \section{Problem 6}
 
 \subsection{a)}
+
 ```{r}
 id <- "1NJ1SuUBebl5P8rMSIwm_n3S8a7K43yP4" # google file ID
 happiness <- read.csv(sprintf("https://docs.google.com/uc?id=%s&export=download", id),fileEncoding="UTF-8-BOM")
@@ -398,7 +402,6 @@ happiness.XY = happiness[, -c(1)]
 happiness.X = data.frame(scale(happiness.X))
 ```
 
-
 ```{r, fig.height=9, fig.width=10,out.width='18cm'}
 library(ggfortify)
 pca_mat = prcomp(happiness.X, center=T, scale=T)
@@ -409,22 +412,19 @@ autoplot(pca_mat, data = happiness.X, colour='Black',
          loadings.label = TRUE, loadings.label.size = 5, 
          label=T, label.size=4.5)
 ```
+
 \subsubsection{i)}
-We observe that the variables "Logged.GDP.per.capita", "Healthy.life.expenctancy"
-and "Social.support" are highly correlated as they have nearly equal loadings on
-PC1 and PC2.
-The loading vectors for the variables "Freedom.to.make.like.choices" and 
-"Perceptions.of.corruption" are nearly antiparallel, indicating that these
-variables have a strong negative correlation.
+
+We observe that the variables "Logged.GDP.per.capita", "Healthy.life.expenctancy" and "Social.support" are highly correlated as they have nearly equal loadings on PC1 and PC2. The loading vectors for the variables "Freedom.to.make.like.choices" and "Perceptions.of.corruption" are nearly antiparallel, indicating that these variables have a strong negative correlation.
 
 \subsubsection{ii)}
-Afghanistan appears to be clearly separated from the other countries in this
-plot, and may be considered to be an outlier.
 
+Afghanistan appears to be clearly separated from the other countries in this plot, and may be considered to be an outlier.
 
 \subsection{b)}
 
 \subsubsection{i)}
+
 ```{r}
 rot <- pca_mat$rotation
 loading.PC1 <- data.frame(variable=rownames(rot), loading=abs(rot[,1]**2))
@@ -432,13 +432,11 @@ ggplot(data=loading.PC1, aes(x=variable, y=loading)) +
   geom_col(color="white", fill="red") +
   coord_flip()
 ```
-Applying an appropriate scaling to the values in the plot above 
-results in the same values as in the plot generated by
-the autoplot function (we are not sure how and why the autoplot
-function scales loadings into different values than those given by 
-pca_mat$rotation).
+
+Applying an appropriate scaling to the values in the plot above results in the same values as in the plot generated by the autoplot function (we are not sure how and why the autoplot function scales loadings into different values than those given by pca_mat\$rotation).
 
 \subsubsection{ii)}
+
 ```{r}
 plsr_model.1 <- plsR(formula=Ladder.score~., data=happiness.XY, 
                    scaleX=T, scaleY=T, nt=1)
@@ -446,6 +444,7 @@ plsr_model.1 <- plsR(formula=Ladder.score~., data=happiness.XY,
 ```
 
 \subsubsection{iii)}
+
 ```{r}
 rot.PC1 <- plsr_model.1$ww
 loading.PC1 <- data.frame(variable=rownames(rot.PC1), loading=abs(rot.PC1[,1]))
@@ -456,21 +455,22 @@ ggplot(data=loading.PC1, aes(x=variable, y=loading)) +
 ```
 
 \subsubsection{iv)}
-Based on the PLSR we see that the variables "Logged.GDP.per.capita", 
-"Healthy.life.expectancy", and "Social.support" are the most important 
-predictors for "Ladder.score".
 
+Based on the PLSR we see that the variables "Logged.GDP.per.capita", "Healthy.life.expectancy", and "Social.support" are the most important predictors for "Ladder.score".
 
 \subsection{c)}
 
+```{=tex}
 \subsection{d)}
 \begin{tabular}{c c c c}
 i) & ii) & iii) & iv)\\
 FALSE & FALSE & TRUE & TRUE\\
 \end{tabular}
-
+```
+```{=tex}
 \subsection{d)}
 \subsubsection{i)}
+```
 ```{r}
 K = 3
 km.out <- kmeans(happiness.X, K, iter.max = 10)
@@ -493,9 +493,11 @@ autoplot(pca_mat, data = happiness.X, colour=km.out$cluster,
          loadings = F, loadings.colour = 'blue',
          loadings.label = F, loadings.label.size = 3)
 ```
+
 K = 3 was the minimum parameter required to obtain the desired clustering conditions.
 
 \subsubsection{ii)}
+
 ```{r}
 clust <- km.out$cluster
 clust[c("Norway", "Denmark", "Sweden", "Finland")]
@@ -503,11 +505,5 @@ clust["United States"]
 mean_ladder <- sapply(1:3, function(i) mean(happiness.Y[names(clust[clust == i]),2]))
 mean_ladder
 ```
-We observe that the clustering algorithm places the scandinavian countries in 
-one cluster, and the United States in another.
-When computing the average value of the "Ladder.score" variable within each cluster,
-we find that "Ladder.score" is largest for the cluster to which the 
-scandinavian countries belong.
-Thus, we conclude that the scandinavian countries belong to the "happiest"
-cluster, and that the United States belong to the "medium happiness" cluster.
 
+We observe that the clustering algorithm places the scandinavian countries in one cluster, and the United States in another. When computing the average value of the "Ladder.score" variable within each cluster, we find that "Ladder.score" is largest for the cluster to which the scandinavian countries belong. Thus, we conclude that the scandinavian countries belong to the "happiest" cluster, and that the United States belong to the "medium happiness" cluster.
